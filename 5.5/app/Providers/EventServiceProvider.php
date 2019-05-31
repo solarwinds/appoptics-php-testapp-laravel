@@ -16,6 +16,13 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Event' => [
             'App\Listeners\EventListener',
         ],
+        'App\Events\NoseEvent' => [
+            'App\Listeners\NosetestQueuedListener',
+        ],
+    ];
+    
+    protected $subscribe = [
+        'App\Listeners\NosetestSyncedListener',
     ];
 
     /**
