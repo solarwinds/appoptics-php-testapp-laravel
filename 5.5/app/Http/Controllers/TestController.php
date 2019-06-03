@@ -34,4 +34,10 @@ class TestController extends Controller
         
         return view('welcome');
     }
+    
+    public function nosetestError() {
+        throw new \RuntimeException('nosetest error message');
+        
+        return view('welcome');
+    }
 }
