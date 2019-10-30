@@ -11,7 +11,7 @@ Test Apps for Laravel
     * apt update && apt install git zip unzip
     * composer create-project --prefer-dist laravel/laravel 6
     * \<log out of docker\>
-4. docker cp <docker-id>:/6 .
+4. docker cp \<docker-id\>:/6 .
 5. \<edit .gitignore and remove exclusion of 'vendor' and '.env'\>
 6. \<commit pristine laravel version\>
 7. \<copy all custom files from previous Laravel folder, see [commit](https://github.com/appoptics/appoptics-php-testapp-laravel/compare/2ac1459e8c2711428d3b5feb83e1223364dbfaf8...45c228d8b1472098377896766c4c74fee1840452) (except for database.sqlite)\>
