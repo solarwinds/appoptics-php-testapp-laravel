@@ -14,7 +14,7 @@ Test Apps for Laravel
 4. docker cp <docker-id>:/6 .
 5. \<edit .gitignore and remove exclusion of 'vendor' and '.env'\>
 6. \<commit pristine laravel version\>
-7. \<copy all custom files from previous Laravel folder, see [commit 1](https://github.com/appoptics/appoptics-php-testapp-laravel/commit/b1dc1311653d67e1e1b22e4d2fb68c46f29e7b95) (except for database.sqlite) and [commit 2](https://github.com/appoptics/appoptics-php-testapp-laravel/commit/60f3648e5ed61c80349ff548f3c8fe7a04aa880e)\>
+7. \<copy all custom files from previous Laravel folder, see [commit](https://github.com/appoptics/appoptics-php-testapp-laravel/compare/2ac1459e8c2711428d3b5feb83e1223364dbfaf8...45c228d8b1472098377896766c4c74fee1840452) (except for database.sqlite)\>
 8. mkdir /tmp/laravel6 && touch /tmp/laravel6/database.sqlite
 9. cd 6/
 10. php artisan migrate
