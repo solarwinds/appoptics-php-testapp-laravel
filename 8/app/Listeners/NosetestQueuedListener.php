@@ -9,6 +9,7 @@ class NosetestQueuedListener implements ShouldQueue
 {
     public function handle(NoseEvent $event)
     {
-        echo 'QueuedListener: ' . $event->str . ' ';
+        usleep(1000);
+        // echo 'QueuedListener: ' . $event->str . ' ';
     }
 }

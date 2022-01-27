@@ -10,7 +10,7 @@ class NosetestSyncedListener
      * Handle nosetest events.
      */
     public function handleNoseEvent($event) {
-        echo 'SyncedListener: ' . $event->str . ' ';
+        usleep(1000); // echo 'SyncedListener: ' . $event->str . ' ';
     }
 
     /**

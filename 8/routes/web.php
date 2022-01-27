@@ -21,3 +21,4 @@ use App\Http\Controllers\TestController;
 
 Route::get('/nosetest', [TestController::class, 'nosetest']);
 Route::get('/nosetesterror', [TestController::class, 'nosetestError']);
+
