@@ -42,7 +42,7 @@ class TestController extends Controller
         Cache::forget('my-key');
         Cache::flush();
 
-        return 'nosetest';
+        return view('welcome');
     }
 
     public function nosetestError() {
