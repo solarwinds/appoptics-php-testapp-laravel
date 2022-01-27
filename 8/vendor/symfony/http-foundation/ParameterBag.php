@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
  * ParameterBag is a container for key/value pairs.
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ *
+ * @implements \IteratorAggregate<string, mixed>
  */
 class ParameterBag implements \IteratorAggregate, \Countable
 {
@@ -35,7 +37,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
      *
      * @param string|null $key The name of the parameter to return or null to get them all
      *
-     * @return array An array of parameters
+     * @return array
      */
     public function all(/*string $key = null*/)
     {
@@ -55,7 +57,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter keys.
      *
-     * @return array An array of parameter keys
+     * @return array
      */
     public function keys()
     {
@@ -103,7 +105,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns true if the parameter is defined.
      *
-     * @return bool true if the parameter exists, false otherwise
+     * @return bool
      */
     public function has(string $key)
     {
@@ -121,7 +123,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the alphabetic characters of the parameter value.
      *
-     * @return string The filtered value
+     * @return string
      */
     public function getAlpha(string $key, string $default = '')
     {
@@ -131,7 +133,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the alphabetic characters and digits of the parameter value.
      *
-     * @return string The filtered value
+     * @return string
      */
     public function getAlnum(string $key, string $default = '')
     {
@@ -141,7 +143,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the digits of the parameter value.
      *
-     * @return string The filtered value
+     * @return string
      */
     public function getDigits(string $key, string $default = '')
     {
@@ -152,7 +154,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter value converted to integer.
      *
-     * @return int The filtered value
+     * @return int
      */
     public function getInt(string $key, int $default = 0)
     {
@@ -162,7 +164,7 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the parameter value converted to boolean.
      *
-     * @return bool The filtered value
+     * @return bool
      */
     public function getBoolean(string $key, bool $default = false)
     {
@@ -194,14 +196,20 @@ class ParameterBag implements \IteratorAggregate, \Countable
             $options['flags'] = \FILTER_REQUIRE_ARRAY;
         }
 
+        if ((\FILTER_CALLBACK & $filter) && !(($options['options'] ?? null) instanceof \Closure)) {
+            trigger_deprecation('symfony/http-foundation', '5.2', 'Not passing a Closure together with FILTER_CALLBACK to "%s()" is deprecated. Wrap your filter in a closure instead.', __METHOD__);
+            // throw new \InvalidArgumentException(sprintf('A Closure must be passed to "%s()" when FILTER_CALLBACK is used, "%s" given.', __METHOD__, get_debug_type($options['options'] ?? null)));
+        }
+
         return filter_var($value, $filter, $options);
     }
 
     /**
      * Returns an iterator for parameters.
      *
-     * @return \ArrayIterator An \ArrayIterator instance
+     * @return \ArrayIterator<string, mixed>
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new \ArrayIterator($this->parameters);
@@ -210,8 +218,9 @@ class ParameterBag implements \IteratorAggregate, \Countable
     /**
      * Returns the number of parameters.
      *
-     * @return int The number of parameters
+     * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return \count($this->parameters);

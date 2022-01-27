@@ -50,7 +50,9 @@ class RateLimitedWithRedis extends RateLimited
     {
         foreach ($limits as $limit) {
             if ($this->tooManyAttempts($limit->key, $limit->maxAttempts, $limit->decayMinutes)) {
-                return $job->release($this->getTimeUntilNextRetry($limit->key));
+                return $this->shouldRelease
+                    ? $job->release($this->getTimeUntilNextRetry($limit->key))
+                    : false;
             }
         }
 
@@ -85,5 +87,17 @@ class RateLimitedWithRedis extends RateLimited
     protected function getTimeUntilNextRetry($key)
     {
         return ($this->decaysAt[$key] - $this->currentTime()) + 3;
+    }
+
+    /**
+     * Prepare the object after unserialization.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        parent::__wakeup();
+
+        $this->redis = Container::getInstance()->make(Redis::class);
     }
 }

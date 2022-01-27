@@ -167,6 +167,8 @@ final class CodeCoverage
                 $this->processUncoveredFilesFromFilter();
             } elseif ($this->includeUncoveredFiles) {
                 $this->addUncoveredFilesFromFilter();
+            } else {
+                $this->data->removeFilesWithNoCoverage();
             }
         }
 
@@ -240,9 +242,9 @@ final class CodeCoverage
      * @param PhptTestCase|string|TestCase $id
      * @param array|false                  $linesToBeCovered
      *
-     * @throws UnintentionallyCoveredCodeException
-     * @throws TestIdMissingException
      * @throws ReflectionException
+     * @throws TestIdMissingException
+     * @throws UnintentionallyCoveredCodeException
      */
     public function append(RawCodeCoverageData $rawData, $id = null, bool $append = true, $linesToBeCovered = [], array $linesToBeUsed = []): void
     {
@@ -277,11 +279,13 @@ final class CodeCoverage
                 return;
             }
 
-            $size   = 'unknown';
-            $status = -1;
+            $size         = 'unknown';
+            $status       = -1;
+            $fromTestcase = false;
 
             if ($id instanceof TestCase) {
-                $_size = $id->getSize();
+                $fromTestcase = true;
+                $_size        = $id->getSize();
 
                 if ($_size === Test::SMALL) {
                     $size = 'small';
@@ -294,11 +298,12 @@ final class CodeCoverage
                 $status = $id->getStatus();
                 $id     = get_class($id) . '::' . $id->getName();
             } elseif ($id instanceof PhptTestCase) {
-                $size = 'large';
-                $id   = $id->getName();
+                $fromTestcase = true;
+                $size         = 'large';
+                $id           = $id->getName();
             }
 
-            $this->tests[$id] = ['size' => $size, 'status' => $status];
+            $this->tests[$id] = ['size' => $size, 'status' => $status, 'fromTestcase' => $fromTestcase];
 
             $this->data->markCodeAsExecutedByTestCase($id, $rawData);
         }
@@ -433,8 +438,8 @@ final class CodeCoverage
      *
      * @param array|false $linesToBeCovered
      *
-     * @throws UnintentionallyCoveredCodeException
      * @throws ReflectionException
+     * @throws UnintentionallyCoveredCodeException
      */
     private function applyCoversAnnotationFilter(RawCodeCoverageData $rawData, $linesToBeCovered, array $linesToBeUsed): void
     {
@@ -540,8 +545,8 @@ final class CodeCoverage
     }
 
     /**
-     * @throws UnintentionallyCoveredCodeException
      * @throws ReflectionException
+     * @throws UnintentionallyCoveredCodeException
      */
     private function performUnintentionallyCoveredCodeCheck(RawCodeCoverageData $data, array $linesToBeCovered, array $linesToBeUsed): void
     {

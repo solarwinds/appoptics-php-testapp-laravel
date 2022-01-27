@@ -2,13 +2,18 @@
 
 namespace Illuminate\View\Compilers;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\ReflectsClosures;
+use Illuminate\View\Component;
 use InvalidArgumentException;
 
 class BladeCompiler extends Compiler implements CompilerInterface
 {
     use Concerns\CompilesAuthorizations,
+        Concerns\CompilesClasses,
         Concerns\CompilesComments,
         Concerns\CompilesComponents,
         Concerns\CompilesConditionals,
@@ -18,11 +23,13 @@ class BladeCompiler extends Compiler implements CompilerInterface
         Concerns\CompilesIncludes,
         Concerns\CompilesInjections,
         Concerns\CompilesJson,
+        Concerns\CompilesJs,
         Concerns\CompilesLayouts,
         Concerns\CompilesLoops,
         Concerns\CompilesRawPhp,
         Concerns\CompilesStacks,
-        Concerns\CompilesTranslations;
+        Concerns\CompilesTranslations,
+        ReflectsClosures;
 
     /**
      * All of the registered extensions.
@@ -100,7 +107,7 @@ class BladeCompiler extends Compiler implements CompilerInterface
     protected $echoFormat = 'e(%s)';
 
     /**
-     * Array of footer lines to be added to template.
+     * Array of footer lines to be added to the template.
      *
      * @var array
      */
@@ -153,9 +160,11 @@ class BladeCompiler extends Compiler implements CompilerInterface
                 $contents = $this->appendFilePath($contents);
             }
 
-            $this->files->put(
-                $this->getCompiledPath($this->getPath()), $contents
+            $this->ensureCompiledDirectoryExists(
+                $compiledPath = $this->getCompiledPath($this->getPath())
             );
+
+            $this->files->put($compiledPath, $contents);
         }
     }
 
@@ -251,7 +260,50 @@ class BladeCompiler extends Compiler implements CompilerInterface
             $result = $this->addFooters($result);
         }
 
-        return $result;
+        if (! empty($this->echoHandlers)) {
+            $result = $this->addBladeCompilerVariable($result);
+        }
+
+        return str_replace(
+            ['##BEGIN-COMPONENT-CLASS##', '##END-COMPONENT-CLASS##'],
+            '',
+            $result);
+    }
+
+    /**
+     * Evaluate and render a Blade string to HTML.
+     *
+     * @param  string  $string
+     * @param  array  $data
+     * @param  bool  $deleteCachedView
+     * @return string
+     */
+    public static function render($string, $data = [], $deleteCachedView = false)
+    {
+        $component = new class($string) extends Component
+        {
+            protected $template;
+
+            public function __construct($template)
+            {
+                $this->template = $template;
+            }
+
+            public function render()
+            {
+                return $this->template;
+            }
+        };
+
+        $view = Container::getInstance()
+                    ->make(ViewFactory::class)
+                    ->make($component->resolveView(), $data);
+
+        return tap($view->render(), function () use ($view, $deleteCachedView) {
+            if ($deleteCachedView) {
+                unlink($view->getPath());
+            }
+        });
     }
 
     /**
@@ -446,6 +498,8 @@ class BladeCompiler extends Compiler implements CompilerInterface
      */
     protected function callCustomDirective($name, $value)
     {
+        $value = $value ?? '';
+
         if (Str::startsWith($value, '(') && Str::endsWith($value, ')')) {
             $value = Str::substr($value, 1, -1);
         }
@@ -575,9 +629,9 @@ class BladeCompiler extends Compiler implements CompilerInterface
     {
         foreach ($components as $key => $value) {
             if (is_numeric($key)) {
-                static::component($value, null, $prefix);
+                $this->component($value, null, $prefix);
             } else {
-                static::component($key, $value, $prefix);
+                $this->component($key, $value, $prefix);
             }
         }
     }

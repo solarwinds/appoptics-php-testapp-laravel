@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Events\NoseEvent;
+use App\Models\Nosetest;
+use \Illuminate\Support\Facades\Cache;
+use \Illuminate\Support\Facades\DB;
+
 class TestController extends Controller
 {
     public function nosetest() {
-        // events
-        event(new \App\Events\NoseEvent('hello from nosetests'));
+        // Push a NoseEvent for Listeners
+        event(new NoseEvent('something'));
 
         // mysql
-        $sql = new \App\Nosetest([
+        $sql = new Nosetest([
             'first_name' => 'FirstN',
             'last_name' => 'LastN',
             'email' => 'EmailA',
@@ -17,22 +23,26 @@ class TestController extends Controller
             'city' => 'City',
             'country' => 'Country'
         ]);
+        // insert the entry to database
         $sql->save();
+        // change first name
         $sql->first_name = 'FirstN_Updated';
+        // insert the entry to database
         $sql->save();
-        \Illuminate\Support\Facades\DB::table('nosetests')->get();
+        // get from nosetests database
+        DB::table('nosetests')->get();
         $sql->delete();
 
-        // cache
-        \Illuminate\Support\Facades\Cache::put('my-key', 'value', now()->addMinutes(10));
-        \Illuminate\Support\Facades\Cache::get('my-key');
-        \Illuminate\Support\Facades\Cache::has('my-key-2');
-        \Illuminate\Support\Facades\Cache::increment('my-key');
-        \Illuminate\Support\Facades\Cache::decrement('my-key');
-        \Illuminate\Support\Facades\Cache::forget('my-key');
-        \Illuminate\Support\Facades\Cache::flush();
+        // Cache
+        Cache::put('my-key', 'value', now()->addMinutes(10));
+        Cache::get('my-key');
+        Cache::has('my-key-2');
+        Cache::increment('my-key');
+        Cache::decrement('my-key');
+        Cache::forget('my-key');
+        Cache::flush();
 
-        return view('welcome');
+        return 'nosetest';
     }
 
     public function nosetestError() {
@@ -40,4 +50,5 @@ class TestController extends Controller
 
         return view('welcome');
     }
+
 }

@@ -14,7 +14,9 @@ use const XDEBUG_CC_DEAD_CODE;
 use const XDEBUG_CC_UNUSED;
 use const XDEBUG_FILTER_CODE_COVERAGE;
 use const XDEBUG_PATH_INCLUDE;
+use function explode;
 use function extension_loaded;
+use function getenv;
 use function in_array;
 use function ini_get;
 use function phpversion;
@@ -33,9 +35,9 @@ use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
 final class Xdebug3Driver extends Driver
 {
     /**
-     * @throws XdebugNotAvailableException
      * @throws WrongXdebugVersionException
      * @throws Xdebug3NotEnabledException
+     * @throws XdebugNotAvailableException
      */
     public function __construct(Filter $filter)
     {
@@ -52,7 +54,14 @@ final class Xdebug3Driver extends Driver
             );
         }
 
-        if (!ini_get('xdebug.mode') || !in_array('coverage', explode(',', ini_get('xdebug.mode')), true)) {
+        $mode = getenv('XDEBUG_MODE');
+
+        if ($mode === false || $mode === '') {
+            $mode = ini_get('xdebug.mode');
+        }
+
+        if ($mode === false ||
+            !in_array('coverage', explode(',', $mode), true)) {
             throw new Xdebug3NotEnabledException;
         }
 

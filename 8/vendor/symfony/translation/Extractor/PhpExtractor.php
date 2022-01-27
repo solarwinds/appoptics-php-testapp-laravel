@@ -21,21 +21,17 @@ use Symfony\Component\Translation\MessageCatalogue;
  */
 class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
 {
-    const MESSAGE_TOKEN = 300;
-    const METHOD_ARGUMENTS_TOKEN = 1000;
-    const DOMAIN_TOKEN = 1001;
+    public const MESSAGE_TOKEN = 300;
+    public const METHOD_ARGUMENTS_TOKEN = 1000;
+    public const DOMAIN_TOKEN = 1001;
 
     /**
      * Prefix for new found message.
-     *
-     * @var string
      */
     private $prefix = '';
 
     /**
      * The sequence that captures translation messages.
-     *
-     * @var array
      */
     protected $sequences = [
         [
@@ -51,6 +47,82 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
         [
             '->',
             'trans',
+            '(',
+            self::MESSAGE_TOKEN,
+        ],
+        [
+            'new',
+            'TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+            ',',
+            self::METHOD_ARGUMENTS_TOKEN,
+            ',',
+            self::DOMAIN_TOKEN,
+        ],
+        [
+            'new',
+            'TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+        ],
+        [
+            'new',
+            '\\',
+            'Symfony',
+            '\\',
+            'Component',
+            '\\',
+            'Translation',
+            '\\',
+            'TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+            ',',
+            self::METHOD_ARGUMENTS_TOKEN,
+            ',',
+            self::DOMAIN_TOKEN,
+        ],
+        [
+            'new',
+            '\Symfony\Component\Translation\TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+            ',',
+            self::METHOD_ARGUMENTS_TOKEN,
+            ',',
+            self::DOMAIN_TOKEN,
+        ],
+        [
+            'new',
+            '\\',
+            'Symfony',
+            '\\',
+            'Component',
+            '\\',
+            'Translation',
+            '\\',
+            'TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+        ],
+        [
+            'new',
+            '\Symfony\Component\Translation\TranslatableMessage',
+            '(',
+            self::MESSAGE_TOKEN,
+        ],
+        [
+            't',
+            '(',
+            self::MESSAGE_TOKEN,
+            ',',
+            self::METHOD_ARGUMENTS_TOKEN,
+            ',',
+            self::DOMAIN_TOKEN,
+        ],
+        [
+            't',
             '(',
             self::MESSAGE_TOKEN,
         ],
@@ -160,6 +232,19 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
                     }
                     break;
                 case \T_END_HEREDOC:
+                    if ($indentation = strspn($t[1], ' ')) {
+                        $docPartWithLineBreaks = $docPart;
+                        $docPart = '';
+
+                        foreach (preg_split('~(\r\n|\n|\r)~', $docPartWithLineBreaks, -1, \PREG_SPLIT_DELIM_CAPTURE) as $str) {
+                            if (\in_array($str, ["\r\n", "\n", "\r"], true)) {
+                                $docPart .= $str;
+                            } else {
+                                $docPart .= substr($str, $indentation);
+                            }
+                        }
+                    }
+
                     $message .= PhpStringTokenParser::parseDocString($docToken, $docPart);
                     $docToken = '';
                     $docPart = '';
@@ -240,6 +325,10 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
      */
     protected function extractFromDirectory($directory)
     {
+        if (!class_exists(Finder::class)) {
+            throw new \LogicException(sprintf('You cannot use "%s" as the "symfony/finder" package is not installed. Try running "composer require symfony/finder".', static::class));
+        }
+
         $finder = new Finder();
 
         return $finder->files()->name('*.php')->in($directory);

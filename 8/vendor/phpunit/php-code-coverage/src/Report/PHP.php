@@ -9,7 +9,6 @@
  */
 namespace SebastianBergmann\CodeCoverage\Report;
 
-use function addcslashes;
 use function dirname;
 use function file_put_contents;
 use function serialize;
@@ -18,17 +17,17 @@ use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Directory;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 
-/**
- * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
- */
 final class PHP
 {
     public function process(CodeCoverage $coverage, ?string $target = null): string
     {
         $buffer = sprintf(
-            '<?php
-return \unserialize(\'%s\');',
-            addcslashes(serialize($coverage), "'")
+            "<?php
+return \unserialize(<<<'END_OF_COVERAGE_SERIALIZATION'%s%s%sEND_OF_COVERAGE_SERIALIZATION%s);",
+            PHP_EOL,
+            serialize($coverage),
+            PHP_EOL,
+            PHP_EOL
         );
 
         if ($target !== null) {
