@@ -12,7 +12,7 @@ class TestController extends Controller
 {
     public function nosetest() {
         // Push a NoseEvent for Listeners
-        event(new NoseEvent('something'));
+        event(new NoseEvent('hello from nosetests'));
 
         // mysql
         $sql = new Nosetest([
