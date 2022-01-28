@@ -11,6 +11,7 @@ class NosetestSyncedListener
      */
     public function handleNoseEvent($event) {
         usleep(1000);
+        throw new \RuntimeException('handleNoseEvent is actually called.');
     }
 
     /**
