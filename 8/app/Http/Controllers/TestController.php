@@ -10,7 +10,8 @@ use \Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
-    public function nosetest() {
+    public function nosetest()
+    {
         // Push a NoseEvent for Listeners
         event(new NoseEvent('hello from nosetests'));
 
@@ -45,7 +46,8 @@ class TestController extends Controller
         return view('welcome');
     }
 
-    public function nosetestError() {
+    public function nosetestError()
+    {
         throw new \RuntimeException('nosetest error message');
 
         return view('welcome');

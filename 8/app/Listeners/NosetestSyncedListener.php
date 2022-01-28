@@ -9,7 +9,8 @@ class NosetestSyncedListener
     /**
      * Handle nosetest events.
      */
-    public function handleNoseEvent($event) {
+    public function handleNoseEvent($event)
+    {
         usleep(1000);
     }
 
