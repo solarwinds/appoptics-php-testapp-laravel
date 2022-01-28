@@ -11,7 +11,6 @@ class NosetestSyncedListener
      */
     public function handleNoseEvent($event) {
         usleep(1000);
-        throw new \RuntimeException('handleNoseEvent is actually called.');
     }
 
     /**
@@ -22,8 +21,12 @@ class NosetestSyncedListener
      */
     public function subscribe($events)
     {
-        return [
-            NoseEvent::class => 'handleNoseEvent',
-        ];
+        // return [
+        //     NoseEvent::class => 'handleNoseEvent',
+        // ];
+        $events->listen(
+            'App\Events\NoseEvent',
+            'App\Listeners\NosetestSyncedListener@handleNoseEvent'
+        );
     }
 }
