@@ -32,7 +32,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        NosetestSyncedListener::class,
+        'App\Listeners\NosetestSyncedListener',
     ];
 
     /**
