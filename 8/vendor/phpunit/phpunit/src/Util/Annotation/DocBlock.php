@@ -199,8 +199,8 @@ final class DocBlock
             '__FILE' => realpath($this->fileName),
         ];
 
-        // Split docblock into lines and rewind offset to start of docblock
-        $lines = preg_split('/\r\n|\r|\n/', $this->docComment);
+        // Trim docblock markers, split it into lines and rewind offset to start of docblock
+        $lines = preg_replace(['#^/\*{2}#', '#\*/$#'], '', preg_split('/\r\n|\r|\n/', $this->docComment));
         $offset -= count($lines);
 
         foreach ($lines as $line) {
@@ -232,7 +232,6 @@ final class DocBlock
                     ];
                     $recordedOffsets[$matches['name'] . '_constraint'] = $offset;
                 } catch (\PharIo\Version\Exception $e) {
-                    /* @TODO this catch is currently not valid, see https://github.com/phar-io/version/issues/16 */
                     throw new Warning($e->getMessage(), $e->getCode(), $e);
                 }
             }
@@ -338,14 +337,14 @@ final class DocBlock
 
     public function isHookToBeExecutedBeforeClass(): bool
     {
-        return $this->isMethod
-            && false !== strpos($this->docComment, '@beforeClass');
+        return $this->isMethod &&
+            false !== strpos($this->docComment, '@beforeClass');
     }
 
     public function isHookToBeExecutedAfterClass(): bool
     {
-        return $this->isMethod
-            && false !== strpos($this->docComment, '@afterClass');
+        return $this->isMethod &&
+            false !== strpos($this->docComment, '@afterClass');
     }
 
     public function isToBeExecutedBeforeTest(): bool
@@ -535,7 +534,8 @@ final class DocBlock
             $annotations = array_merge(
                 $annotations,
                 ...array_map(
-                    function (ReflectionClass $trait): array {
+                    static function (ReflectionClass $trait): array
+                    {
                         return self::parseDocBlock((string) $trait->getDocComment());
                     },
                     array_values($reflector->getTraits())

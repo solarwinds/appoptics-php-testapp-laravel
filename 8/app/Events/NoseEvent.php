@@ -4,10 +4,21 @@ namespace App\Events;
 
 class NoseEvent
 {
-    public $abc;
+    /**
+     * The message
+     *
+     * @var String
+     */
+    public $str;
 
-    public function __construct($abc)
+    /**
+     * Create a new event instance.
+     *
+     * @param String $str
+     * @return void
+     */
+    public function __construct($str)
     {
-        $this->abc = $abc;
+        $this->str = $str;
     }
 }

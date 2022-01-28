@@ -18,9 +18,6 @@ use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Directory as DirectoryUtil;
 use SebastianBergmann\CodeCoverage\Node\Directory as DirectoryNode;
 
-/**
- * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
- */
 final class Facade
 {
     /**
@@ -55,7 +52,7 @@ final class Facade
     {
         $target = $this->directory($target);
         $report = $coverage->getReport();
-        $date   = (string) date('D M j G:i:s T Y');
+        $date   = date('D M j G:i:s T Y');
 
         $dashboard = new Dashboard(
             $this->templatePath,

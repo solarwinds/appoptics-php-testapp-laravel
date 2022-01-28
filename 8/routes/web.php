@@ -17,5 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/nosetest','TestController@nosetest');
-Route::get('/nosetesterror','TestController@nosetestError');
+use App\Http\Controllers\TestController;
+
+Route::get('/nosetest', [TestController::class, 'nosetest']);
+Route::get('/nosetesterror', [TestController::class, 'nosetestError']);
+
