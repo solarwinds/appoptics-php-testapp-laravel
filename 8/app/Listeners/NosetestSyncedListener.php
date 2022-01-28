@@ -21,6 +21,10 @@ class NosetestSyncedListener
      */
     public function subscribe($events)
     {
+        /**
+         * The nosetest can only instrument the default handle function of the listener.
+         * It cannot instrument the user-defined handle function from subscriber.
+         */
         // return [
         //     NoseEvent::class => 'handleNoseEvent',
         // ];
