@@ -25,4 +25,12 @@ class TrustProxies extends Middleware
         Request::HEADER_X_FORWARDED_PORT |
         Request::HEADER_X_FORWARDED_PROTO |
         Request::HEADER_X_FORWARDED_AWS_ELB;
+
+    /**
+     * Added for nosetests
+     */
+    public function terminate($request, $response)
+    {
+        usleep(1000);
+    }
 }
