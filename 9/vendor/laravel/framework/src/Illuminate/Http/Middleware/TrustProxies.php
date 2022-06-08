@@ -40,6 +40,14 @@ class TrustProxies
     }
 
     /**
+     * Added for nosetests
+     */
+    public function terminate($request, $response)
+    {
+        usleep(1000);
+    }
+
+    /**
      * Sets the trusted proxies on the request.
      *
      * @param  \Illuminate\Http\Request  $request
