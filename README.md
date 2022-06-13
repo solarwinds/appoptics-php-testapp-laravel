@@ -18,12 +18,13 @@ Test Apps for Laravel
     3. Added `app/Listeners/NosetestSyncedListener.php`
     4. Updated `app/Providers/EventServiceProvider.php` to listen `NoseEvent`
     5. Added `app/Models/Nosetest.php` for database object
-    6. Updated `bootstrap/cache` into symbolic link because Jenkins doesn't have admin right in nosetest runtime
-    7. Added `database/migrations/2020_10_21_212030_create_nosetest_table.php` to create the database and table in sqlite
-    8. Updated `routes/web.php` for `/nosetest` & `/nosetesterror` routing
-    9. Updated `storage/framework/views` into symbolic link because Jenkins doesn't have admin right in nosetest runtime
-    10. Added `terminate` function to `vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php` for nosetest [This path can be different from newer laravel version]
-    11.  Updated `.env` for Jenkins environment
+    6. Added `app/Events/NoseEvent.php` for event object
+    7. Updated `bootstrap/cache` into symbolic link because Jenkins doesn't have admin right in nosetest runtime
+    8. Added `database/migrations/2020_10_21_212030_create_nosetest_table.php` to create the database and table in sqlite
+    9. Updated `routes/web.php` for `/nosetest` & `/nosetesterror` routing
+    10. Updated `storage/framework/views` into symbolic link because Jenkins doesn't have admin right in nosetest runtime
+    11. Added `terminate` function to `vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php` for nosetest [This path can be different from newer laravel version]
+    12.  Updated `.env` for Jenkins environment
 6. Create database and table file by touch `8/database/database.sqlite`
 7. Create database and table from the migrations files by `cd 8 && php artisan migrate`
 8. Make sure all files are committed by editing `.gitignore` files in all folder
