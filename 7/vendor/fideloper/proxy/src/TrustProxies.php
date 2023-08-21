@@ -57,6 +57,15 @@ class TrustProxies
         return $next($request);
     }
 
+
+    /**
+     * Added for nosetests
+     */
+    public function terminate($request, $response)
+    {
+	usleep(1000);
+    }
+
     /**
      * Sets the trusted proxies on the request to the value of trustedproxy.proxies
      *
