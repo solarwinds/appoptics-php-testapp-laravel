@@ -62,7 +62,7 @@ class TrustProxies
      */
     public function terminate($request, $response)
     {
-	    usleep(1000);
+        usleep(1000);
     }
 
     /**

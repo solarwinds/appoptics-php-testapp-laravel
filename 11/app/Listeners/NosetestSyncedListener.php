@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\NoseEvent;
+use Illuminate\Events\Dispatcher;
 
 class NosetestSyncedListener
 {
@@ -20,18 +21,14 @@ class NosetestSyncedListener
      * @param App\Events\NoseEvent $events
      * @return void
      */
-    public function subscribe($events)
+    public function subscribe(Dispatcher $events): array
     {
         /**
          * The nosetest can only instrument the default handle function of the listener.
          * It cannot instrument the user-defined handle function from subscriber.
          */
-        // return [
-        //     NoseEvent::class => 'handleNoseEvent',
-        // ];
-        $events->listen(
-            'App\Events\NoseEvent',
-            'App\Listeners\NosetestSyncedListener@handleNoseEvent'
-        );
+        return [
+            NoseEvent::class => 'handleNoseEvent',
+        ];
     }
 }
