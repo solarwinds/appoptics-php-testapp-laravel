@@ -20,5 +20,7 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
+        // Add your custom domain or Docker service name here
+        allowedHosts: ['alpine-3.20', 'alpine-3.21', alpine-3.22', 'localhost', '127.0.0.1'], 
     },
 });
